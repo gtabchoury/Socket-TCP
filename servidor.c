@@ -19,7 +19,6 @@
 
 #define LISTENQ 10
 #define MAXLINE 4096
-#define MAXPLAYERS 10
 #define MAXPOLL 30
 #define TIMEOUT 1000
 #define MAXNAME 50
@@ -29,23 +28,31 @@ struct sock_wrapper {
    char name[MAXNAME];
 };
 
+struct perfil {
+   char email[50];
+   char nome[20];
+   char sobrenome[20];
+   char residencia[50];
+   char formacao[50];
+   char ano_formatura[50];
+   char habilidades[200];
+   char experiencias[200];
+};
+
 // Envia lista de jogadores conectados
-void send_player_list(int sock, struct player** connected_players, int conn_players);
 void new_connection(int sock, struct pollfd pfds[], char pdfs_name[MAXPOLL][MAXNAME], int* p_size);
-void handle_command(int src, int n, char* command, struct player** connected_players, int conn_players);
+void handle_command(int src, int n, char* command, char* pdfs_name);
+
+char menu[] = "\n\nOlá! Escolha uma opção abaixo: \n\n1-Cadastrar novo perfil\n2-Adicionar experiência profissional\n3-Busca por curso\n4-Busca por habilidade\n5-Busca por ano de formação\n6-Busca por email\n7-Listar todos perfis\n8-Apagar perfil\n";
 
 int main (int argc, char **argv) {
    int    listenfd;
-   // int connfd;
    struct sockaddr_in servaddr;
    char   recvline[MAXLINE + 1];
-
    struct sockaddr_in conn_settings;
    socklen_t sock_len;
 
-   // Aloca o array de jogadores (compartilha a memoria entre os processos)
-   struct player** connected_players = calloc(MAXPLAYERS, sizeof(struct player*));
-   int conn_players = 0;
+   struct perfil** perfis = calloc(MAXPOLL, sizeof(struct perfil*));
 
    // Cria o socket
    if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -96,26 +103,27 @@ int main (int argc, char **argv) {
             for(int i=0; i<p_size; i++) {
                if(pfds[i].revents & (POLLIN)) {
                   // Caso haja uma nova conexão
-                  if(strcmp(pdfs_name[i], "LISTENFD") == 0)
+                  if(strcmp(pdfs_name[i], "LISTENFD") == 0){
                      new_connection(listenfd, pfds, pdfs_name, &p_size);
-
-                  // Caso seja um comando de um cliente
-                  else
-                     if(pdfs_name[i][0] == 'c') {
+                  }else{
+                     if(pdfs_name[i][0] == 'm') {
                         int n = read(pfds[i].fd, recvline, MAXLINE);
-                        recvline[n-1] = 0;
-
-                        printf("Player %s joined\n", recvline);
-
-                        struct player* player = create_player(pfds[i].fd, recvline);
-                        connected_players[conn_players++] = player;
-                        pdfs_name[i][0] = 'C';
-
-                        send_player_list(pfds[i].fd, connected_players, conn_players);
-                     } else if(pdfs_name[i][0] == 'C') {
+                        int opcao = atoi(recvline);
+                        
+                        switch (opcao){
+                           case 1:
+                              pdfs_name[i][0] = '1';
+                              pdfs_name[i][1] = 'a';
+                              write(pfds[i].fd, "Email: ", 7);
+                           break;
+                           default:
+                           break;
+                        }
+                     } else {
                         int n = read(pfds[i].fd, recvline, MAXLINE);
-                        handle_command(pfds[i].fd, n, recvline, connected_players, conn_players);
+                        handle_command(pfds[i].fd, n, recvline, pdfs_name[i]);
                      }
+                  }
                }
             }
             break;
@@ -128,7 +136,7 @@ int main (int argc, char **argv) {
 
 void new_connection(int sock, struct pollfd pfds[], char pdfs_name[MAXPOLL][MAXNAME], int* p_size) {
    int connfd = accept(sock, (struct sockaddr *) NULL, NULL);
-
+   
    if (connfd == -1 ) {
       perror("accept");
       exit(1);
@@ -136,44 +144,66 @@ void new_connection(int sock, struct pollfd pfds[], char pdfs_name[MAXPOLL][MAXN
 
    pfds[*p_size].fd = connfd;
    pfds[*p_size].events = POLLIN;
-   sprintf(pdfs_name[*p_size], "c-%d", connfd);
+   sprintf(pdfs_name[*p_size], "m-%d", connfd);
    (*p_size)++;
 
-   write(connfd, "Who are you? ", 13);
+   write(connfd, menu, strlen(menu));
 }
 
-void handle_command(int src, int n, char* command, struct player** connected_players, int conn_players) {
+void handle_command(int src, int n, char* command, char* pdfs_name) {
    if(n == 1 && command[0] == '\n') {
-      send_player_list(src, connected_players, conn_players);
+      printf("PARTOU AQUI");
       return;
    }
 
-   char cmd[10], p1[10], p2[10];
-   sscanf(command, "%s %s %s", cmd, p1, p2);
+   char input[200];
+   sscanf(command, "%s", input);
 
-   if(strcmp(cmd, "START") == 0){
-      printf("Starting game with %s...\n", p1);
+   char menu_opt = pdfs_name[0];
+   char opt_step = pdfs_name[1];
+
+   switch (menu_opt){
+      case '1':
+         switch (opt_step){
+            case 'a':
+               write(src, "Nome: ", 6);
+               pdfs_name[1]='b';
+            break;
+            case 'b':
+               write(src, "Sobrenome: ", 11);
+               pdfs_name[1]='c';
+            break;
+            case 'c':
+               write(src, "Cidade de residência: ", 23);
+               pdfs_name[1]='d';
+            break;
+            case 'd':
+               write(src, "Formação acadêmica: ", 23);
+               pdfs_name[1]='e';
+            break;
+            case 'e':
+               write(src, "Ano de formatura: ", 18);
+               pdfs_name[1]='f';
+            break;
+            case 'f':
+               write(src, "Habilidades (separadas por ;): ", 31);
+               pdfs_name[1]='g';
+            break;
+            case 'g':
+               write(src, "Experiências (separadas por ;): ", 33);
+               pdfs_name[1]='h';
+            break;
+            case 'h':
+               write(src, "\nPerfil cadastrado com sucesso!!!\n\n", 33);
+               pdfs_name[0]='m';
+               pdfs_name[1]='a';
+               write(src, menu, strlen(menu));
+            break;
+            default:
+            break;
+         }
+      break;
+      default:
+      break;
    }
-   else {
-      printf("Command %s %s %s not found\n", cmd, p1, p2);
-   }
-}
-
-void send_player_list(int sock, struct player** connected_players, int conn_players) {
-   char line[MAXLINE] = {0};
-   char* cursor = line;
-
-   cursor += sprintf(cursor, "\nConnected players:\n");
-
-   for(int i=0; i<conn_players; i++) {
-      struct player* player = connected_players[i];
-      cursor += sprintf(cursor, "\t%2d. %s\n", i+1, player->name);
-   }
-
-   cursor += sprintf(cursor, "\n");
-   cursor += sprintf(cursor, "Press ENTER to update connected players list\n");
-   cursor += sprintf(cursor, "Type START <player> to start a game\n");
-   cursor += sprintf(cursor, "\n");
-
-   write(sock, line, cursor - line);
 }
