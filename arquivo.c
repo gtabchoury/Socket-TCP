@@ -101,10 +101,15 @@ void filterByCourse(int src, char course[1000]){
         j++;
     }
 
-    char result[2000]="Listando perfis do curso...\n";
+    int count=0;
+
+    char result[2000]="\nListando perfis com formação em: ";
+    strcat(result, course);
+    strcat(result, "\n---------------------------------------------------------\n");
 
     for(int i = 0; i < 10; i++){
         if(strstr(dados[i][4], course) != NULL) {
+            count++;
             char perfil_id[2];
             sprintf(perfil_id, "%d", i);
             strcat(result, "Perfil #");
@@ -113,41 +118,149 @@ void filterByCourse(int src, char course[1000]){
             strcat(result, dados[i][0]);
             strcat(result, "\nNome: ");
             strcat(result, dados[i][1]);
-            strcat(result, "\n");
+            strcat(result, "\n---------------------------------------------------------\n");
         }
     }
 
-    write(src, result, strlen(result));
+    if (count==0){
+        sprintf(result, "%s", "Nenhum perfil encontrado. \n");
+        write(src, result, strlen(result));
+    }else{
+        write(src, result, strlen(result));
+    }
+    
 }
 
-void filterBySkill(char dados[10][10][1000]){
+void filterBySkill(int src, char skill[1000]){
 
-    char teste[1000] = "Internet das Coisas";
+    FILE *pont_arq;
+    int r;
+    pont_arq = fopen("perfis.txt", "r");
 
-    //printf("Lista de pessoas com a habilidade %s\n",&teste);
+    char** tokens;
+    
+    //Testando a abertura do arquivo
+    if (pont_arq == NULL)
+    {
+    printf("Erro ao tentar abrir o arquivo!");
+    exit(1);
+    }
+
+    char texto_str[1000];
+
+    char dados[10][10][1000];
+
+    int j = 0;
+    while(fgets(texto_str, 2000, pont_arq) != NULL){
+        tokens = str_split(texto_str, ';');
+        if (tokens)
+        {
+            int i;
+            for (i = 0; *(tokens + i); i++)
+            {
+                strcpy(dados[j][i], (*(tokens + i)));
+                //teste[i] = *(tokens + i);
+                //printf("%s\n", *(tokens + i));
+                free(*(tokens + i));
+            }
+            //printf("\n");
+            free(tokens);
+        }
+        j++;
+    }
+
+    int count=0;
+    char result[2000]="\nListando perfis com habilidade: ";
+    strcat(result, skill);
+    strcat(result, "\n---------------------------------------------------------\n");
 
     for(int i = 0; i < 10; i++){
-        if(strstr(dados[i][6],teste) != NULL) {
-            //printf("Email: %s, Nome: %s\n",&dados[i][0],&dados[i][1]);
+        if(strstr(dados[i][6], skill) != NULL) {
+            count++;
+            char perfil_id[2];
+            sprintf(perfil_id, "%d", i);
+            strcat(result, "Perfil #");
+            strcat(result, perfil_id);
+            strcat(result, "\nEmail: ");
+            strcat(result, dados[i][0]);
+            strcat(result, "\nNome: ");
+            strcat(result, dados[i][1]);
+            strcat(result, "\n---------------------------------------------------------\n");
         }
     }
 
-    printf("\n");
+    if (count==0){
+        sprintf(result, "%s", "Nenhum perfil encontrado. \n");
+        write(src, result, strlen(result));
+    }else{
+        write(src, result, strlen(result));
+    }
 }
 
-void filterByGraduateYear(char dados[10][10][1000]){
+void filterByGraduateYear(int src, char year[1000]){
 
-    char teste[1000] = "2015";
+    FILE *pont_arq;
+    int r;
+    pont_arq = fopen("perfis.txt", "r");
 
-    //printf("Lista de pessoas formadas no ano de %s\n",&teste);
+    char** tokens;
+    
+    //Testando a abertura do arquivo
+    if (pont_arq == NULL)
+    {
+    printf("Erro ao tentar abrir o arquivo!");
+    exit(1);
+    }
+
+    char texto_str[1000];
+
+    char dados[10][10][1000];
+
+    int j = 0;
+    while(fgets(texto_str, 2000, pont_arq) != NULL){
+        tokens = str_split(texto_str, ';');
+        if (tokens)
+        {
+            int i;
+            for (i = 0; *(tokens + i); i++)
+            {
+                strcpy(dados[j][i], (*(tokens + i)));
+                //teste[i] = *(tokens + i);
+                //printf("%s\n", *(tokens + i));
+                free(*(tokens + i));
+            }
+            //printf("\n");
+            free(tokens);
+        }
+        j++;
+    }
+
+    int count=0;
+    char result[2000]="\nListando perfis com ano de formação em: ";
+    strcat(result, year);
+    strcat(result, "\n---------------------------------------------------------\n");
 
     for(int i = 0; i < 10; i++){
-        if(strcmp(dados[i][5],teste) == 0) {
-            //printf("Email: %s, Nome: %s\n, Curso: %s\n",&dados[i][0],&dados[i][1],&dados[i][4]);
+        if(strstr(dados[i][5],year) != NULL) {
+            count++;
+            char perfil_id[2];
+            sprintf(perfil_id, "%d", i);
+            strcat(result, "Perfil #");
+            strcat(result, perfil_id);
+            strcat(result, "\nEmail: ");
+            strcat(result, dados[i][0]);
+            strcat(result, "\nNome: ");
+            strcat(result, dados[i][1]);
+            strcat(result, "\n---------------------------------------------------------\n");
         }
     }
 
-    printf("\n");
+    if (count==0){
+        sprintf(result, "%s", "Nenhum perfil encontrado. \n");
+        write(src, result, strlen(result));
+    }else{
+        write(src, result, strlen(result));
+    }
 }
 
 void listAll(int src){
@@ -188,11 +301,16 @@ void listAll(int src){
         j++;
     }
 
+    int count=0;
+
     char teste[1000] = "";
 
-    char result[3000]="Listando todos os perfis...\n";
+    char result[3000]="\nListando todos os perfis...";
+    strcat(result, "\n---------------------------------------------------------\n");
+
     for(int i = 0; i < 10; i++){
         if(strcmp(dados[i][0],teste) != 0){
+            count++;
             char perfil_id[2];
             sprintf(perfil_id, "%d", i);
             strcat(result, "Perfil #");
@@ -213,13 +331,95 @@ void listAll(int src){
             strcat(result, dados[i][6]);
             strcat(result, "\nExperiências: ");
             strcat(result, dados[i][7]);
-            strcat(result, "\n\n");
+            strcat(result, "\n---------------------------------------------------------\n");
         }
     }
 
-    write(src, result, strlen(result));
+    if (count==0){
+        sprintf(result, "%s", "Nenhum perfil encontrado. \n");
+        write(src, result, strlen(result));
+    }else{
+        write(src, result, strlen(result));
+    }
 }
 
 void create(char dados[10][1000]){
+
+}
+
+void filterByEmail(int src, char email[1000]){
+    FILE *pont_arq;
+    int r;
+    pont_arq = fopen("perfis.txt", "r");
+
+    char** tokens;
     
+    //Testando a abertura do arquivo
+    if (pont_arq == NULL)
+    {
+    printf("Erro ao tentar abrir o arquivo!");
+    exit(1);
+    }
+
+    char texto_str[1000];
+
+    char dados[10][10][1000];
+
+    int j = 0;
+    while(fgets(texto_str, 2000, pont_arq) != NULL){
+        tokens = str_split(texto_str, ';');
+        if (tokens)
+        {
+            int i;
+            for (i = 0; *(tokens + i); i++)
+            {
+                strcpy(dados[j][i], (*(tokens + i)));
+                //teste[i] = *(tokens + i);
+                //printf("%s\n", *(tokens + i));
+                free(*(tokens + i));
+            }
+            //printf("\n");
+            free(tokens);
+        }
+        j++;
+    }
+
+    int count=0;
+    char result[2000]="\nListando perfil com email: ";
+    strcat(result, email);
+    strcat(result, "\n---------------------------------------------------------\n");
+
+    for(int i = 0; i < 10; i++){
+        if(strcmp(dados[i][0], email) == 0){
+            count++;
+            char perfil_id[2];
+            sprintf(perfil_id, "%d", i);
+            strcat(result, "Perfil #");
+            strcat(result, perfil_id);
+            strcat(result, "\nEmail: ");
+            strcat(result, dados[i][0]);
+            strcat(result, "\nNome: ");
+            strcat(result, dados[i][1]);
+            strcat(result, ", Sobrenome: ");
+            strcat(result, dados[i][2]);
+            strcat(result, "\nResidência: ");
+            strcat(result, dados[i][3]);
+            strcat(result, "\nFormação Acadêmica: ");
+            strcat(result, dados[i][4]);
+            strcat(result, "\nAno de formatura: ");
+            strcat(result, dados[i][5]);
+            strcat(result, "\nHabilidades: ");
+            strcat(result, dados[i][6]);
+            strcat(result, "\nExperiências: ");
+            strcat(result, dados[i][7]);
+            strcat(result, "\n---------------------------------------------------------\n");
+        }
+    }
+
+    if (count==0){
+        sprintf(result, "%s", "Nenhum perfil encontrado. \n");
+        write(src, result, strlen(result));
+    }else{
+        write(src, result, strlen(result));
+    }
 }

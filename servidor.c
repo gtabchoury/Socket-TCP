@@ -13,9 +13,6 @@
 #include <signal.h>
 #include <poll.h>
 
-
-//#include "shared_mem.h"  // Altera funcionamento do malloc, calloc e free
-#include "tictactoe.h"
 #include "arquivo.h"
 
 #define LISTENQ 10
@@ -35,7 +32,7 @@ char perfis[MAXPOLL][10][1000];
 void new_connection(int sock, struct pollfd pfds[], char pdfs_name[MAXPOLL][MAXNAME], int* p_size);
 void handle_command(int src, int n, char* command, char* pdfs_name, int i);
 
-char menu[] = "\n\nOlá! Escolha uma opção abaixo: \n\n1-Cadastrar novo perfil\n2-Adicionar experiência profissional\n3-Busca por curso\n4-Busca por habilidade\n5-Busca por ano de formação\n6-Busca por email\n7-Listar todos perfis\n8-Apagar perfil\n";
+char menu[] = "\nOlá! Escolha uma opção abaixo: \n\n1-Cadastrar novo perfil\n2-Adicionar experiência profissional\n3-Busca por curso\n4-Busca por habilidade\n5-Busca por ano de formação\n6-Busca por email\n7-Listar todos perfis\n8-Apagar perfil\nOpção: ";
 
 int main (int argc, char **argv) {
    int    listenfd;
@@ -111,11 +108,27 @@ int main (int argc, char **argv) {
                               pdfs_name[i][1] = 'a';
                               write(pfds[i].fd, "Digite o curso: ", 16);
                            break;
+                           case 4:
+                              pdfs_name[i][0] = '4';
+                              pdfs_name[i][1] = 'a';
+                              write(pfds[i].fd, "Digite a habilidade: ", 21);
+                           break;
+                           case 5:
+                              pdfs_name[i][0] = '5';
+                              pdfs_name[i][1] = 'a';
+                              write(pfds[i].fd, "Digite o ano de formação: ", 28);
+                           break;
+                           case 6:
+                              pdfs_name[i][0] = '6';
+                              pdfs_name[i][1] = 'a';
+                              write(pfds[i].fd, "Digite o email: ", 16);
+                           break;
                            case 7:
                               listAll(pfds[i].fd);
+                              write(pfds[i].fd, menu, strlen(menu));
                            break;
                            default:
-                              write(pfds[i].fd, "Opção inválida\n", 20);
+                              write(pfds[i].fd, "Opção inválida\nOpção: ", 28);
                            break;
                         }
                      } else {
@@ -201,7 +214,7 @@ void handle_command(int src, int n, char* command, char* pdfs_name, int i) {
             break;
             case 'h':
                strcpy(perfis[i][7], input);
-               
+
                write(src, "\nPerfil cadastrado com sucesso!!!\n\n", 33);
                pdfs_name[0]='m';
                pdfs_name[1]='a';
@@ -215,6 +228,42 @@ void handle_command(int src, int n, char* command, char* pdfs_name, int i) {
          switch (opt_step){
             case 'a':
                filterByCourse(src, input);
+               pdfs_name[0]='m';
+               pdfs_name[1]='a';
+               write(src, menu, strlen(menu));
+            break;
+            default:
+            break;
+         }
+      break;
+      case '4':
+         switch (opt_step){
+            case 'a':
+               filterBySkill(src, input);
+               pdfs_name[0]='m';
+               pdfs_name[1]='a';
+               write(src, menu, strlen(menu));
+            break;
+            default:
+            break;
+         }
+      break;
+      case '5':
+         switch (opt_step){
+            case 'a':
+               filterByGraduateYear(src, input);
+               pdfs_name[0]='m';
+               pdfs_name[1]='a';
+               write(src, menu, strlen(menu));
+            break;
+            default:
+            break;
+         }
+      break;
+      case '6':
+         switch (opt_step){
+            case 'a':
+               filterByEmail(src, input);
                pdfs_name[0]='m';
                pdfs_name[1]='a';
                write(src, menu, strlen(menu));
