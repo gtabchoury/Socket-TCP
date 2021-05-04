@@ -16,6 +16,7 @@
 
 //#include "shared_mem.h"  // Altera funcionamento do malloc, calloc e free
 #include "tictactoe.h"
+#include "arquivo.h"
 
 #define LISTENQ 10
 #define MAXLINE 4096
@@ -28,20 +29,11 @@ struct sock_wrapper {
    char name[MAXNAME];
 };
 
-struct perfil {
-   char email[50];
-   char nome[20];
-   char sobrenome[20];
-   char residencia[50];
-   char formacao[50];
-   char ano_formatura[50];
-   char habilidades[200];
-   char experiencias[200];
-};
+char perfis[MAXPOLL][10][1000];
 
 // Envia lista de jogadores conectados
 void new_connection(int sock, struct pollfd pfds[], char pdfs_name[MAXPOLL][MAXNAME], int* p_size);
-void handle_command(int src, int n, char* command, char* pdfs_name);
+void handle_command(int src, int n, char* command, char* pdfs_name, int i);
 
 char menu[] = "\n\nOlá! Escolha uma opção abaixo: \n\n1-Cadastrar novo perfil\n2-Adicionar experiência profissional\n3-Busca por curso\n4-Busca por habilidade\n5-Busca por ano de formação\n6-Busca por email\n7-Listar todos perfis\n8-Apagar perfil\n";
 
@@ -51,8 +43,6 @@ int main (int argc, char **argv) {
    char   recvline[MAXLINE + 1];
    struct sockaddr_in conn_settings;
    socklen_t sock_len;
-
-   struct perfil** perfis = calloc(MAXPOLL, sizeof(struct perfil*));
 
    // Cria o socket
    if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -116,12 +106,21 @@ int main (int argc, char **argv) {
                               pdfs_name[i][1] = 'a';
                               write(pfds[i].fd, "Email: ", 7);
                            break;
+                           case 3:
+                              pdfs_name[i][0] = '3';
+                              pdfs_name[i][1] = 'a';
+                              write(pfds[i].fd, "Digite o curso: ", 16);
+                           break;
+                           case 7:
+                              listAll(pfds[i].fd);
+                           break;
                            default:
+                              write(pfds[i].fd, "Opção inválida\n", 20);
                            break;
                         }
                      } else {
                         int n = read(pfds[i].fd, recvline, MAXLINE);
-                        handle_command(pfds[i].fd, n, recvline, pdfs_name[i]);
+                        handle_command(pfds[i].fd, n, recvline, pdfs_name[i], i);
                      }
                   }
                }
@@ -150,14 +149,14 @@ void new_connection(int sock, struct pollfd pfds[], char pdfs_name[MAXPOLL][MAXN
    write(connfd, menu, strlen(menu));
 }
 
-void handle_command(int src, int n, char* command, char* pdfs_name) {
+void handle_command(int src, int n, char* command, char* pdfs_name, int i) {
    if(n == 1 && command[0] == '\n') {
       printf("PARTOU AQUI");
       return;
    }
 
-   char input[200];
-   sscanf(command, "%s", input);
+   char input[1000];
+   sscanf(command, "%[^\n]s", input);
 
    char menu_opt = pdfs_name[0];
    char opt_step = pdfs_name[1];
@@ -166,35 +165,56 @@ void handle_command(int src, int n, char* command, char* pdfs_name) {
       case '1':
          switch (opt_step){
             case 'a':
+               strcpy(perfis[i][0], input);
                write(src, "Nome: ", 6);
                pdfs_name[1]='b';
             break;
             case 'b':
+               strcpy(perfis[i][1], input);
                write(src, "Sobrenome: ", 11);
                pdfs_name[1]='c';
             break;
             case 'c':
+               strcpy(perfis[i][2], input);
                write(src, "Cidade de residência: ", 23);
                pdfs_name[1]='d';
             break;
             case 'd':
+               strcpy(perfis[i][3], input);
                write(src, "Formação acadêmica: ", 23);
                pdfs_name[1]='e';
             break;
             case 'e':
+               strcpy(perfis[i][4], input);
                write(src, "Ano de formatura: ", 18);
                pdfs_name[1]='f';
             break;
             case 'f':
-               write(src, "Habilidades (separadas por ;): ", 31);
+               strcpy(perfis[i][5], input);
+               write(src, "Habilidades (separadas por ,): ", 31);
                pdfs_name[1]='g';
             break;
             case 'g':
-               write(src, "Experiências (separadas por ;): ", 33);
+               strcpy(perfis[i][6], input);
+               write(src, "Experiências (separadas por ,): ", 33);
                pdfs_name[1]='h';
             break;
             case 'h':
+               strcpy(perfis[i][7], input);
+               
                write(src, "\nPerfil cadastrado com sucesso!!!\n\n", 33);
+               pdfs_name[0]='m';
+               pdfs_name[1]='a';
+               write(src, menu, strlen(menu));
+            break;
+            default:
+            break;
+         }
+      break;
+      case '3':
+         switch (opt_step){
+            case 'a':
+               filterByCourse(src, input);
                pdfs_name[0]='m';
                pdfs_name[1]='a';
                write(src, menu, strlen(menu));
