@@ -16,6 +16,8 @@
 
 #include "arquivo.h"
 
+#define ARQ_NAME "perfis.txt"
+
 char** str_split(char* a_str, const char a_delim){
     char** result    = 0;
     size_t count     = 0;
@@ -25,11 +27,8 @@ char** str_split(char* a_str, const char a_delim){
     delim[0] = a_delim;
     delim[1] = 0;
 
-    /* Count how many elements will be extracted. */
-    while (*tmp)
-    {
-        if (a_delim == *tmp)
-        {
+    while (*tmp){
+        if (a_delim == *tmp){
             count++;
             last_comma = tmp;
         }
@@ -45,13 +44,11 @@ char** str_split(char* a_str, const char a_delim){
 
     result = malloc(sizeof(char*) * count);
 
-    if (result)
-    {
+    if (result){
         size_t idx  = 0;
         char* token = strtok(a_str, delim);
 
-        while (token)
-        {
+        while (token){
             assert(idx < count);
             *(result + idx++) = strdup(token);
             token = strtok(0, delim);
@@ -64,45 +61,33 @@ char** str_split(char* a_str, const char a_delim){
 }
 
 void filterByCourse(int src, char course[1000]){
-
     FILE *pont_arq;
     int r;
-    pont_arq = fopen("perfis.txt", "r");
-
+    pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
-    
-    //Testando a abertura do arquivo
-    if (pont_arq == NULL)
-    {
-    printf("Erro ao tentar abrir o arquivo!");
-    exit(1);
-    }
-
-    char texto_str[1000];
-
     char dados[10][10][1000];
+    char texto_str[1000];
+    
+    if (pont_arq == NULL){
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
 
     int j = 0;
     while(fgets(texto_str, 2000, pont_arq) != NULL){
         tokens = str_split(texto_str, ';');
-        if (tokens)
-        {
+        if (tokens){
             int i;
-            for (i = 0; *(tokens + i); i++)
-            {
+            for (i = 0; *(tokens + i); i++){
                 strcpy(dados[j][i], (*(tokens + i)));
-                //teste[i] = *(tokens + i);
-                //printf("%s\n", *(tokens + i));
                 free(*(tokens + i));
             }
-            //printf("\n");
             free(tokens);
         }
         j++;
     }
 
     int count=0;
-
     char result[2000]="\nListando perfis com formação em: ";
     strcat(result, course);
     strcat(result, "\n---------------------------------------------------------\n");
@@ -132,38 +117,27 @@ void filterByCourse(int src, char course[1000]){
 }
 
 void filterBySkill(int src, char skill[1000]){
-
     FILE *pont_arq;
     int r;
-    pont_arq = fopen("perfis.txt", "r");
-
+    pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
-    
-    //Testando a abertura do arquivo
-    if (pont_arq == NULL)
-    {
-    printf("Erro ao tentar abrir o arquivo!");
-    exit(1);
-    }
-
-    char texto_str[1000];
-
     char dados[10][10][1000];
+    char texto_str[1000];
+    
+    if (pont_arq == NULL){
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
 
     int j = 0;
     while(fgets(texto_str, 2000, pont_arq) != NULL){
         tokens = str_split(texto_str, ';');
-        if (tokens)
-        {
+        if (tokens){
             int i;
-            for (i = 0; *(tokens + i); i++)
-            {
+            for (i = 0; *(tokens + i); i++){
                 strcpy(dados[j][i], (*(tokens + i)));
-                //teste[i] = *(tokens + i);
-                //printf("%s\n", *(tokens + i));
                 free(*(tokens + i));
             }
-            //printf("\n");
             free(tokens);
         }
         j++;
@@ -198,38 +172,27 @@ void filterBySkill(int src, char skill[1000]){
 }
 
 void filterByGraduateYear(int src, char year[1000]){
-
     FILE *pont_arq;
     int r;
-    pont_arq = fopen("perfis.txt", "r");
-
+    pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
-    
-    //Testando a abertura do arquivo
-    if (pont_arq == NULL)
-    {
-    printf("Erro ao tentar abrir o arquivo!");
-    exit(1);
-    }
-
-    char texto_str[1000];
-
     char dados[10][10][1000];
+    char texto_str[1000];
+    
+    if (pont_arq == NULL){
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
 
     int j = 0;
     while(fgets(texto_str, 2000, pont_arq) != NULL){
         tokens = str_split(texto_str, ';');
-        if (tokens)
-        {
+        if (tokens){
             int i;
-            for (i = 0; *(tokens + i); i++)
-            {
+            for (i = 0; *(tokens + i); i++){
                 strcpy(dados[j][i], (*(tokens + i)));
-                //teste[i] = *(tokens + i);
-                //printf("%s\n", *(tokens + i));
                 free(*(tokens + i));
             }
-            //printf("\n");
             free(tokens);
         }
         j++;
@@ -264,52 +227,38 @@ void filterByGraduateYear(int src, char year[1000]){
 }
 
 void listAll(int src){
-
     FILE *pont_arq;
     int r;
-    pont_arq = fopen("perfis.txt", "r");
-
+    pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
-    
-    //Testando a abertura do arquivo
-    if (pont_arq == NULL)
-    {
-    printf("Erro ao tentar abrir o arquivo!");
-    exit(1);
-    }
-
-    char texto_str[1000];
-
     char dados[10][10][1000];
+    char texto_str[1000];
+    
+    if (pont_arq == NULL){
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
 
     int j = 0;
     while(fgets(texto_str, 2000, pont_arq) != NULL){
         tokens = str_split(texto_str, ';');
-        if (tokens)
-        {
+        if (tokens){
             int i;
-            for (i = 0; *(tokens + i); i++)
-            {
+            for (i = 0; *(tokens + i); i++){
                 strcpy(dados[j][i], (*(tokens + i)));
-                //teste[i] = *(tokens + i);
-                //printf("%s\n", *(tokens + i));
                 free(*(tokens + i));
             }
-            //printf("\n");
             free(tokens);
         }
         j++;
     }
 
     int count=0;
-
-    char teste[1000] = "";
-
     char result[3000]="\nListando todos os perfis...";
     strcat(result, "\n---------------------------------------------------------\n");
 
     for(int i = 0; i < 10; i++){
-        if(strcmp(dados[i][0],teste) != 0){
+        if(strcmp(dados[i][0], "") != 0){
             count++;
             char perfil_id[2];
             sprintf(perfil_id, "%d", i);
@@ -350,35 +299,25 @@ void create(char dados[10][1000]){
 void filterByEmail(int src, char email[1000]){
     FILE *pont_arq;
     int r;
-    pont_arq = fopen("perfis.txt", "r");
-
+    pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
-    
-    //Testando a abertura do arquivo
-    if (pont_arq == NULL)
-    {
-    printf("Erro ao tentar abrir o arquivo!");
-    exit(1);
-    }
-
-    char texto_str[1000];
-
     char dados[10][10][1000];
+    char texto_str[1000];
+    
+    if (pont_arq == NULL){
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
 
     int j = 0;
     while(fgets(texto_str, 2000, pont_arq) != NULL){
         tokens = str_split(texto_str, ';');
-        if (tokens)
-        {
+        if (tokens){
             int i;
-            for (i = 0; *(tokens + i); i++)
-            {
+            for (i = 0; *(tokens + i); i++){
                 strcpy(dados[j][i], (*(tokens + i)));
-                //teste[i] = *(tokens + i);
-                //printf("%s\n", *(tokens + i));
                 free(*(tokens + i));
             }
-            //printf("\n");
             free(tokens);
         }
         j++;

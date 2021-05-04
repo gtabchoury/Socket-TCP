@@ -163,12 +163,8 @@ void new_connection(int sock, struct pollfd pfds[], char pdfs_name[MAXPOLL][MAXN
 }
 
 void handle_command(int src, int n, char* command, char* pdfs_name, int i) {
-   if(n == 1 && command[0] == '\n') {
-      printf("PARTOU AQUI");
-      return;
-   }
-
    char input[1000];
+   
    sscanf(command, "%[^\n]s", input);
 
    char menu_opt = pdfs_name[0];

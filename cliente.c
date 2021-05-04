@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
    struct sockaddr_in servaddr;
    char* char_p;
 
-   // Verifica os parametros
+   // Verifica os parametros de entrada
    if (argc != 3) {
       strcpy(error,"uso: ");
       strcat(error,argv[0]);
@@ -72,10 +72,6 @@ int main(int argc, char **argv) {
             perror("Erro");
             break;
 
-         // case 0:
-         //    perror("Timeout");
-         //    break;
-
          default:
             // Caso a chamada seja o read no socket (e tenha algo para ler)
             if(pfds[1].revents & POLLIN && (n = read(sockfd, buffer, MAXLINE)) > 0) {
@@ -92,22 +88,14 @@ int main(int argc, char **argv) {
                   // Caso de sucesso, envia a linha ao servidor e contabiliza os bytes enviados
                   write(sockfd, buffer, strlen(buffer));
                   diff += strlen(buffer);
-               }
-               else{
+               }else{
                   // Caso de erro, fecha a transmissão de dados do socket e marca que o arquivo acabou
                   shutdown(sockfd, 1);
                   file_has_ended = 1;
                }
             }
-
-            // // Caso nao tenha nada a ser feito, verifica se ja recebeu o arquivo inteiro
-            // else if(diff == 0){
-            //    close(sockfd);
-            //    return 0;
-            // }
             break;
       }
    }
-
    return 0;
 }
