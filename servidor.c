@@ -164,7 +164,7 @@ void new_connection(int sock, struct pollfd pfds[], char pdfs_name[MAXPOLL][MAXN
 
 void handle_command(int src, int n, char* command, char* pdfs_name, int i) {
    char input[1000];
-   
+
    sscanf(command, "%[^\n]s", input);
 
    char menu_opt = pdfs_name[0];
@@ -210,8 +210,7 @@ void handle_command(int src, int n, char* command, char* pdfs_name, int i) {
             break;
             case 'h':
                strcpy(perfis[i][7], input);
-
-               write(src, "\nPerfil cadastrado com sucesso!!!\n\n", 33);
+               create(src, perfis[i]);
                pdfs_name[0]='m';
                pdfs_name[1]='a';
                write(src, menu, strlen(menu));

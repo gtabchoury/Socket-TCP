@@ -292,8 +292,80 @@ void listAll(int src){
     }
 }
 
-void create(char dados[10][1000]){
+void create(int src, char new_profile[10][1000]){
+    FILE *pont_arq;
+    int r;
+    pont_arq = fopen(ARQ_NAME, "r");
+    char** tokens;
+    char dados[10][10][1000];
+    char texto_str[1000];
+    
+    if (pont_arq == NULL){
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
 
+    int j = 0;
+    while(fgets(texto_str, 2000, pont_arq) != NULL){
+        tokens = str_split(texto_str, ';');
+        if (tokens){
+            int i;
+            for (i = 0; *(tokens + i); i++){
+                strcpy(dados[j][i], (*(tokens + i)));
+                free(*(tokens + i));
+            }
+            free(tokens);
+        }
+        j++;
+    }
+
+    int count=0;
+    for(int i = 0; i < 10; i++){
+        if(strcmp(dados[i][0], "") != 0){
+            count++;
+        }
+    }
+
+    strcpy(dados[count][0],new_profile[0]);
+    strcpy(dados[count][1],new_profile[1]);
+    strcpy(dados[count][2],new_profile[2]);
+    strcpy(dados[count][3],new_profile[3]);
+    strcpy(dados[count][4],new_profile[4]);
+    strcpy(dados[count][5],new_profile[5]);
+    strcpy(dados[count][6],new_profile[6]);
+    strcpy(dados[count][7],new_profile[7]);
+
+    fclose(pont_arq);
+
+    pont_arq = fopen(ARQ_NAME, "w");
+
+    for(int i = 0; i < 10; i++){
+        if(strcmp(dados[i][0], "") != 0){
+            char output[1000];
+            sprintf(output,"%s",dados[i][0]);
+            strcat(output, ";");
+            strcat(output, dados[i][1]);
+            strcat(output, ";");
+            strcat(output, dados[i][2]);
+            strcat(output, ";");
+            strcat(output, dados[i][3]);
+            strcat(output, ";");
+            strcat(output, dados[i][4]);
+            strcat(output, ";");
+            strcat(output, dados[i][5]);
+            strcat(output, ";");
+            strcat(output, dados[i][6]);
+            strcat(output, ";");
+            strcat(output, dados[i][7]);
+            strcat(output, ";\n");
+            printf("%d - %s", i, output);
+            r = fputs(output, pont_arq);
+        }
+    }
+
+    fclose(pont_arq);
+
+    write(src, "\nPerfil cadastrado com sucesso!!!\n\n", 33);
 }
 
 void filterByEmail(int src, char email[1000]){

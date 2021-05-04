@@ -7,6 +7,6 @@ void filterBySkill(int src, char skill[1000]);
 void filterByGraduateYear(int src, char year[1000]);
 void filterByEmail(int src, char email[1000]);
 void listAll(int src);
-void create(char dados[10][1000]);
+void create(int src, char new_profile[10][1000]);
 
 #endif
