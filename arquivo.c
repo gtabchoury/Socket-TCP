@@ -292,6 +292,45 @@ void listAll(int src){
     }
 }
 
+int checkEmail(char email[1000]){
+    FILE *pont_arq;
+    int r;
+    pont_arq = fopen(ARQ_NAME, "r");
+    char** tokens;
+    char dados[10][10][1000];
+    char texto_str[1000];
+    
+    if (pont_arq == NULL){
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
+
+    int j = 0;
+    while(fgets(texto_str, 2000, pont_arq) != NULL){
+        tokens = str_split(texto_str, ';');
+        if (tokens){
+            int i;
+            for (i = 0; *(tokens + i); i++){
+                strcpy(dados[j][i], (*(tokens + i)));
+                free(*(tokens + i));
+            }
+            free(tokens);
+        }
+        j++;
+    }
+
+    int count=0;
+
+    for(int i = 0; i < 10; i++){
+        if(strcmp(dados[i][0], email) == 0){
+            count=1;
+            break;
+        }
+    }
+
+    return count;
+}
+
 void create(int src, char new_profile[10][1000]){
     FILE *pont_arq;
     int r;
@@ -358,7 +397,6 @@ void create(int src, char new_profile[10][1000]){
             strcat(output, ";");
             strcat(output, dados[i][7]);
             strcat(output, ";\n");
-            printf("%d - %s", i, output);
             r = fputs(output, pont_arq);
         }
     }
@@ -433,4 +471,137 @@ void filterByEmail(int src, char email[1000]){
     }else{
         write(src, result, strlen(result));
     }
+}
+
+
+void removeProfile(int src, char email[1000]){
+    FILE *pont_arq;
+    int r;
+    pont_arq = fopen(ARQ_NAME, "r");
+    char** tokens;
+    char dados[10][10][1000];
+    char texto_str[1000];
+    
+    if (pont_arq == NULL){
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
+
+    int j = 0;
+    while(fgets(texto_str, 2000, pont_arq) != NULL){
+        tokens = str_split(texto_str, ';');
+        if (tokens){
+            int i;
+            for (i = 0; *(tokens + i); i++){
+                strcpy(dados[j][i], (*(tokens + i)));
+                free(*(tokens + i));
+            }
+            free(tokens);
+        }
+        j++;
+    }
+
+    int count=0;
+    for(int i = 0; i < 10; i++){
+        if(strcmp(dados[i][0], email) == 0){
+            strcpy(dados[i][0], "");
+        }
+    }
+
+    fclose(pont_arq);
+
+    pont_arq = fopen(ARQ_NAME, "w");
+
+    for(int i = 0; i < 10; i++){
+        if(strcmp(dados[i][0], "") != 0){
+            char output[1000];
+            sprintf(output,"%s",dados[i][0]);
+            strcat(output, ";");
+            strcat(output, dados[i][1]);
+            strcat(output, ";");
+            strcat(output, dados[i][2]);
+            strcat(output, ";");
+            strcat(output, dados[i][3]);
+            strcat(output, ";");
+            strcat(output, dados[i][4]);
+            strcat(output, ";");
+            strcat(output, dados[i][5]);
+            strcat(output, ";");
+            strcat(output, dados[i][6]);
+            strcat(output, ";");
+            strcat(output, dados[i][7]);
+            strcat(output, ";\n");
+            r = fputs(output, pont_arq);
+        }
+    }
+
+    fclose(pont_arq);
+
+    write(src, "\nPerfil removido com sucesso!!!\n\n", 33);
+}
+
+void addExperience(int src, char email[1000], char experience[1000]){
+    FILE *pont_arq;
+    int r;
+    pont_arq = fopen(ARQ_NAME, "r");
+    char** tokens;
+    char dados[10][10][1000];
+    char texto_str[1000];
+    
+    if (pont_arq == NULL){
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
+
+    int j = 0;
+    while(fgets(texto_str, 2000, pont_arq) != NULL){
+        tokens = str_split(texto_str, ';');
+        if (tokens){
+            int i;
+            for (i = 0; *(tokens + i); i++){
+                strcpy(dados[j][i], (*(tokens + i)));
+                free(*(tokens + i));
+            }
+            free(tokens);
+        }
+        j++;
+    }
+
+    int count=0;
+    for(int i = 0; i < 10; i++){
+        if(strcmp(dados[i][0], email) == 0){
+            strcpy(dados[i][7], strcat(strcat(dados[i][7], ","), experience));
+        }
+    }
+
+    fclose(pont_arq);
+
+    pont_arq = fopen(ARQ_NAME, "w");
+
+    for(int i = 0; i < 10; i++){
+        if(strcmp(dados[i][0], "") != 0){
+            char output[1000];
+            sprintf(output,"%s",dados[i][0]);
+            strcat(output, ";");
+            strcat(output, dados[i][1]);
+            strcat(output, ";");
+            strcat(output, dados[i][2]);
+            strcat(output, ";");
+            strcat(output, dados[i][3]);
+            strcat(output, ";");
+            strcat(output, dados[i][4]);
+            strcat(output, ";");
+            strcat(output, dados[i][5]);
+            strcat(output, ";");
+            strcat(output, dados[i][6]);
+            strcat(output, ";");
+            strcat(output, dados[i][7]);
+            strcat(output, ";\n");
+            r = fputs(output, pont_arq);
+        }
+    }
+
+    fclose(pont_arq);
+
+    write(src, "\nExperiência adicionada com sucesso!!!\n\n", 41);
 }

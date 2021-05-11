@@ -34,6 +34,8 @@ void handle_command(int src, int n, char* command, char* pdfs_name, int i);
 
 char menu[] = "\nOlá! Escolha uma opção abaixo: \n\n1-Cadastrar novo perfil\n2-Adicionar experiência profissional\n3-Busca por curso\n4-Busca por habilidade\n5-Busca por ano de formação\n6-Busca por email\n7-Listar todos perfis\n8-Apagar perfil\nOpção: ";
 
+char emails[MAXPOLL][1000];
+
 int main (int argc, char **argv) {
    int    listenfd;
    struct sockaddr_in servaddr;
@@ -103,6 +105,11 @@ int main (int argc, char **argv) {
                               pdfs_name[i][1] = 'a';
                               write(pfds[i].fd, "Email: ", 7);
                            break;
+                           case 2:
+                              pdfs_name[i][0] = '2';
+                              pdfs_name[i][1] = 'a';
+                              write(pfds[i].fd, "Digite o email: ", 16);
+                           break;
                            case 3:
                               pdfs_name[i][0] = '3';
                               pdfs_name[i][1] = 'a';
@@ -126,6 +133,11 @@ int main (int argc, char **argv) {
                            case 7:
                               listAll(pfds[i].fd);
                               write(pfds[i].fd, menu, strlen(menu));
+                           break;
+                           case 8:
+                              pdfs_name[i][0] = '8';
+                              pdfs_name[i][1] = 'a';
+                              write(pfds[i].fd, "Digite o email do perfil a ser removido: ", 41);
                            break;
                            default:
                               write(pfds[i].fd, "Opção inválida\nOpção: ", 28);
@@ -174,9 +186,13 @@ void handle_command(int src, int n, char* command, char* pdfs_name, int i) {
       case '1':
          switch (opt_step){
             case 'a':
-               strcpy(perfis[i][0], input);
-               write(src, "Nome: ", 6);
-               pdfs_name[1]='b';
+               if (checkEmail(input)>0){
+                  write(src, "Email já cadastrado. Informe um email diferente: ", 50);
+               }else{
+                  strcpy(perfis[i][0], input);
+                  write(src, "Nome: ", 6);
+                  pdfs_name[1]='b';
+               }
             break;
             case 'b':
                strcpy(perfis[i][1], input);
@@ -211,6 +227,27 @@ void handle_command(int src, int n, char* command, char* pdfs_name, int i) {
             case 'h':
                strcpy(perfis[i][7], input);
                create(src, perfis[i]);
+               pdfs_name[0]='m';
+               pdfs_name[1]='a';
+               write(src, menu, strlen(menu));
+            break;
+            default:
+            break;
+         }
+      break;
+      case '2':
+         switch (opt_step){
+            case 'a':
+               if (checkEmail(input)>0){
+                  write(src, "Digite a nova experiência: ", 28);
+                  strcpy(emails[src], input);
+                  pdfs_name[1]='b';
+               }else{
+                  write(src, "Email não encontrado. Digite novamente: ", 41);
+               }
+            break;
+            case 'b':
+               addExperience(src, emails[src], input);
                pdfs_name[0]='m';
                pdfs_name[1]='a';
                write(src, menu, strlen(menu));
@@ -265,6 +302,16 @@ void handle_command(int src, int n, char* command, char* pdfs_name, int i) {
             break;
             default:
             break;
+         }
+      break;
+      case '8':
+         if (checkEmail(input)>0){
+            removeProfile(src, input);
+            pdfs_name[0]='m';
+            pdfs_name[1]='a';
+            write(src, menu, strlen(menu));
+         }else{
+            write(src, "Email não encontrado. Digite novamente: ", 41);
          }
       break;
       default:

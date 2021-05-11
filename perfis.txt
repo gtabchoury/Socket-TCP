@@ -1,5 +1,4 @@
 maria_silva@gmail.com;Maria;Silva;Campinas;Ciência da Computação;2013;Análise de Dados,Internet das Coisas,Computação em Nuvem;(1) Estágio de 1 ano na Empresa X onde trabalhei como analista de dados, Trabalhei com IoT e Computação em Nuvem por 5 anos na Empresa Y;
-joao_silva@gmail.com;João;Silva;Ipatinga;Engenharia da Computação;2015;Frontend, UX, Computação em Nuvem;(1) Estágio de 1 ano na Empresa X onde trabalhei como analista de dados, Trabalhei com IoT e Computação em Nuvem por 5 anos na Empresa Y;
-maria_silva2@gmail.com;Maria2;Silva;Campinas;Ciência da Computação;2015;Análise de Dados,Internet das Coisas,Computação em Nuvem;(1) Estágio de 1 ano na Empresa X onde trabalhei como analista de dados, Trabalhei com IoT e Computação em Nuvem por 5 anos na Empresa Y;
+maria_silva2@gmail.com;Maria2;Silva;Campinas;Ciência da Computação;2015;Análise de Dados,Internet das Coisas,Computação em Nuvem;(1) Estágio de 1 ano na Empresa X onde trabalhei como analista de dados, Trabalhei com IoT e Computação em Nuvem por 5 anos na Empresa Y,programacao de redes;
 dssaasd;asdasd;asdasd;asdasd;asdsad;asdsad;asdas;asdsa;
-ismael@stoom.com.br;Ismael;melo;Ipatinga;Comp;2021;frontend,react;conpec,fejesp,stoom;
+tabs@stoom.com.br;asddas;asdasd;asdasd;asdsad;asd;asd;asdsa,redes;
