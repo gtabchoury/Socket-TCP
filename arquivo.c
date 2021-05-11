@@ -11,9 +11,6 @@
 #include <time.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <signal.h>
-#include <poll.h>
-
 #include "arquivo.h"
 
 #define ARQ_NAME "perfis.txt"
@@ -66,6 +63,16 @@ void filterByCourse(int src, char course[1000]){
     pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
     char dados[10][10][1000];
+    for(int i = 0; i < 10; i++){
+        strcpy(dados[i][0], "");
+        strcpy(dados[i][1], "");
+        strcpy(dados[i][2], "");
+        strcpy(dados[i][3], "");
+        strcpy(dados[i][4], "");
+        strcpy(dados[i][5], "");
+        strcpy(dados[i][6], "");
+        strcpy(dados[i][7], "");
+    }
     char texto_str[1000];
     
     if (pont_arq == NULL){
@@ -107,6 +114,8 @@ void filterByCourse(int src, char course[1000]){
         }
     }
 
+    fclose(pont_arq);
+
     if (count==0){
         sprintf(result, "%s", "Nenhum perfil encontrado. \n");
         write(src, result, strlen(result));
@@ -122,6 +131,16 @@ void filterBySkill(int src, char skill[1000]){
     pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
     char dados[10][10][1000];
+    for(int i = 0; i < 10; i++){
+        strcpy(dados[i][0], "");
+        strcpy(dados[i][1], "");
+        strcpy(dados[i][2], "");
+        strcpy(dados[i][3], "");
+        strcpy(dados[i][4], "");
+        strcpy(dados[i][5], "");
+        strcpy(dados[i][6], "");
+        strcpy(dados[i][7], "");
+    }
     char texto_str[1000];
     
     if (pont_arq == NULL){
@@ -163,6 +182,8 @@ void filterBySkill(int src, char skill[1000]){
         }
     }
 
+    fclose(pont_arq);
+
     if (count==0){
         sprintf(result, "%s", "Nenhum perfil encontrado. \n");
         write(src, result, strlen(result));
@@ -177,6 +198,16 @@ void filterByGraduateYear(int src, char year[1000]){
     pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
     char dados[10][10][1000];
+    for(int i = 0; i < 10; i++){
+        strcpy(dados[i][0], "");
+        strcpy(dados[i][1], "");
+        strcpy(dados[i][2], "");
+        strcpy(dados[i][3], "");
+        strcpy(dados[i][4], "");
+        strcpy(dados[i][5], "");
+        strcpy(dados[i][6], "");
+        strcpy(dados[i][7], "");
+    }
     char texto_str[1000];
     
     if (pont_arq == NULL){
@@ -218,6 +249,8 @@ void filterByGraduateYear(int src, char year[1000]){
         }
     }
 
+    fclose(pont_arq);
+
     if (count==0){
         sprintf(result, "%s", "Nenhum perfil encontrado. \n");
         write(src, result, strlen(result));
@@ -232,6 +265,17 @@ void listAll(int src){
     pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
     char dados[10][10][1000];
+    for(int i = 0; i < 10; i++){
+        strcpy(dados[i][0], "");
+        strcpy(dados[i][1], "");
+        strcpy(dados[i][2], "");
+        strcpy(dados[i][3], "");
+        strcpy(dados[i][4], "");
+        strcpy(dados[i][5], "");
+        strcpy(dados[i][6], "");
+        strcpy(dados[i][7], "");
+    }
+
     char texto_str[1000];
     
     if (pont_arq == NULL){
@@ -284,6 +328,8 @@ void listAll(int src){
         }
     }
 
+    fclose(pont_arq);
+
     if (count==0){
         sprintf(result, "%s", "Nenhum perfil encontrado. \n");
         write(src, result, strlen(result));
@@ -298,6 +344,16 @@ int checkEmail(char email[1000]){
     pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
     char dados[10][10][1000];
+    for(int i = 0; i < 10; i++){
+        strcpy(dados[i][0], "");
+        strcpy(dados[i][1], "");
+        strcpy(dados[i][2], "");
+        strcpy(dados[i][3], "");
+        strcpy(dados[i][4], "");
+        strcpy(dados[i][5], "");
+        strcpy(dados[i][6], "");
+        strcpy(dados[i][7], "");
+    }
     char texto_str[1000];
     
     if (pont_arq == NULL){
@@ -328,6 +384,8 @@ int checkEmail(char email[1000]){
         }
     }
 
+    fclose(pont_arq);
+
     return count;
 }
 
@@ -337,6 +395,16 @@ void create(int src, char new_profile[10][1000]){
     pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
     char dados[10][10][1000];
+    for(int i = 0; i < 10; i++){
+        strcpy(dados[i][0], "");
+        strcpy(dados[i][1], "");
+        strcpy(dados[i][2], "");
+        strcpy(dados[i][3], "");
+        strcpy(dados[i][4], "");
+        strcpy(dados[i][5], "");
+        strcpy(dados[i][6], "");
+        strcpy(dados[i][7], "");
+    }
     char texto_str[1000];
     
     if (pont_arq == NULL){
@@ -412,6 +480,16 @@ void filterByEmail(int src, char email[1000]){
     pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
     char dados[10][10][1000];
+    for(int i = 0; i < 10; i++){
+        strcpy(dados[i][0], "");
+        strcpy(dados[i][1], "");
+        strcpy(dados[i][2], "");
+        strcpy(dados[i][3], "");
+        strcpy(dados[i][4], "");
+        strcpy(dados[i][5], "");
+        strcpy(dados[i][6], "");
+        strcpy(dados[i][7], "");
+    }
     char texto_str[1000];
     
     if (pont_arq == NULL){
@@ -465,6 +543,8 @@ void filterByEmail(int src, char email[1000]){
         }
     }
 
+    fclose(pont_arq);
+
     if (count==0){
         sprintf(result, "%s", "Nenhum perfil encontrado. \n");
         write(src, result, strlen(result));
@@ -480,6 +560,16 @@ void removeProfile(int src, char email[1000]){
     pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
     char dados[10][10][1000];
+    for(int i = 0; i < 10; i++){
+        strcpy(dados[i][0], "");
+        strcpy(dados[i][1], "");
+        strcpy(dados[i][2], "");
+        strcpy(dados[i][3], "");
+        strcpy(dados[i][4], "");
+        strcpy(dados[i][5], "");
+        strcpy(dados[i][6], "");
+        strcpy(dados[i][7], "");
+    }
     char texto_str[1000];
     
     if (pont_arq == NULL){
@@ -546,6 +636,16 @@ void addExperience(int src, char email[1000], char experience[1000]){
     pont_arq = fopen(ARQ_NAME, "r");
     char** tokens;
     char dados[10][10][1000];
+    for(int i = 0; i < 10; i++){
+        strcpy(dados[i][0], "");
+        strcpy(dados[i][1], "");
+        strcpy(dados[i][2], "");
+        strcpy(dados[i][3], "");
+        strcpy(dados[i][4], "");
+        strcpy(dados[i][5], "");
+        strcpy(dados[i][6], "");
+        strcpy(dados[i][7], "");
+    }
     char texto_str[1000];
     
     if (pont_arq == NULL){
