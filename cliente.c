@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
    struct sockaddr_in servaddr;
    char* char_p;
 
-   // Verifica os parametros de entrada
+   // Verifica os parâmetros de entrada (ip e porta do servido)
    if (argc != 3) {
       strcpy(error,"uso: ");
       strcat(error,argv[0]);
@@ -31,49 +31,51 @@ int main(int argc, char **argv) {
       exit(1);
    }
 
-   // Cria o socket
+   // Cria o socket e verifica se não houve erro
    if ( (sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
       perror("socket error");
       exit(1);
    }
 
-   // Informações de conexão
+   // Seta algumas informações da conexão
    bzero(&servaddr, sizeof(servaddr));
    servaddr.sin_family = AF_INET;
    servaddr.sin_port   = htons(strtol(argv[2], &char_p, 10));
 
+   // converte o endereço de texto para binario
    if (inet_pton(AF_INET, argv[1], &servaddr.sin_addr) <= 0) {
       perror("inet_pton error");
       exit(1);
    }
 
-   // Estabelece conexão
+   // Estabelece a conexão com o servidor e verifica se não houve erro
    if (connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0) {
       perror("connect error");
       exit(1);
    }
 
-   // Criando array de file descriptors
+   // Cria um array de file descriptors
    struct pollfd pfds[2] = {
       { .fd = fileno(stdin), .events = POLLIN },
       { .fd = sockfd, .events = POLLIN }
    };
 
-   // flag para indicar que o arquivo acabou
+   // flag que indica o fim do arquivo
    char file_has_ended = 0;
 
-   // diferença entre o que foi enviado e o que foi lido do servidor, inicia = 0
+   // diferença entre o que foi enviado e o que foi recebido pelo servidor
    long diff = 0;
 
    while(1) {
-      // Verifica se existe alguma chamada não blockante no momento
+      // Verifica se existe alguma chamada
       switch(poll(pfds, 2, TIMEOUT)) {
          case -1:
             perror("Erro");
             break;
 
          default:
-            // Caso a chamada seja o read no socket (e tenha algo para ler)
+            // Chamada no read do socket
+            // imprime o que foi recebido pelo servidor e limpa o buffer
             if(pfds[1].revents & POLLIN && (n = read(sockfd, buffer, MAXLINE)) > 0) {
                buffer[n] = '\0';
                printf("%s", buffer);
@@ -81,15 +83,14 @@ int main(int argc, char **argv) {
                diff -= strlen(buffer);
             }
 
-            // Caso a chamada seja o read no stdin (e o arquivo não tenha terminado)
+            // Chamada no read do stdin
+            // lê uma linha do arquivo e envia a linha ao servidor
             else if(pfds[0].revents & POLLIN && !file_has_ended) {
-               // Tenta ler uma linha do arquivo
                if(fgets(buffer, MAXLINE, stdin) != NULL){
-                  // Caso de sucesso, envia a linha ao servidor e contabiliza os bytes enviados
                   write(sockfd, buffer, strlen(buffer));
                   diff += strlen(buffer);
                }else{
-                  // Caso de erro, fecha a transmissão de dados do socket e marca que o arquivo acabou
+                  // Em caso de erro, encerra a transmissão de dados
                   shutdown(sockfd, 1);
                   file_has_ended = 1;
                }
