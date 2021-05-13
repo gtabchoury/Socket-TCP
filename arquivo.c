@@ -392,7 +392,7 @@ void listAll(int src){
     int count=0;
 
     /*A string "result" irá guardar a mensagem de resposta para a requisição*/
-    char result[3000]="\nListando todos os perfis...";
+    char result[10000]="\nListando todos os perfis...";
     strcat(result, "\n---------------------------------------------------------\n");
 
     /*Percorre a matriz de dados, e concatena na resposta todos os dados referentes a todos os usuários*/
